@@ -11,9 +11,8 @@ public record Card(Color color, Ctype type, int number) {
         BLOCK, REVERSE, PLUSTWO, PLUSFOUR, COLORCHANGE, NORMAL
     }
 
-    @Override
-    public Color color() {
-        return color;
+    public String getColor() {
+        return color.toString();
     }
 
     @Override
@@ -81,9 +80,7 @@ public record Card(Color color, Ctype type, int number) {
         return drawedCard;
     }
 
-    public boolean doesCardsMatch(Card card1, Card card2) {
-        return true;
-    }
+
 
     @Override
     public String toString() {

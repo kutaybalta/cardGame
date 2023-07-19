@@ -13,4 +13,12 @@ public class Player {
     public List<Card> getCards() {
         return playerCards;
     }
+
+    public int getDrawCount() {
+        return drawCount;
+    }
+
+    public void setDrawCount(int drawCount) {
+        this.drawCount = drawCount;
+    }
 }
