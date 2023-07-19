@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -6,7 +7,7 @@ public record Card(Color color, Ctype type, int number) {
     private enum Color {
         RED, BLUE, GREEN, YELLOW, NOCOLOR
     }
-    private enum Ctype {
+    public enum Ctype {
         BLOCK, REVERSE, PLUSTWO, PLUSFOUR, COLORCHANGE, NORMAL
     }
 
@@ -68,6 +69,7 @@ public record Card(Color color, Ctype type, int number) {
             deck.add(getSpecialCard(Ctype.COLORCHANGE));
         }
 
+        Collections.shuffle(deck);
         return deck;
     }
 
@@ -77,6 +79,10 @@ public record Card(Color color, Ctype type, int number) {
         Card drawedCard = deck.get(randomIndex);
         deck.remove(randomIndex);
         return drawedCard;
+    }
+
+    public boolean doesCardsMatch(Card card1, Card card2) {
+        return true;
     }
 
     @Override
