@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public record Card(Color color, Ctype type, int number) {
     private enum Color {
@@ -19,7 +20,7 @@ public record Card(Color color, Ctype type, int number) {
         return type;
     }
 
-    public Card getNumericCard(int number, Color color) {
+    public static Card getNumericCard(int number, Color color) {
         if (number < 0 || number > 9) {
             System.out.println("Invalid number");
             return null;
@@ -28,7 +29,7 @@ public record Card(Color color, Ctype type, int number) {
         return new Card(color, Ctype.NORMAL, number);
     }
 
-    public Card getSpecialCard(Color color, Ctype type) {
+    public static Card getSpecialCard(Color color, Ctype type) {
         if (type == Ctype.BLOCK || type == Ctype.REVERSE || type == Ctype.PLUSTWO) {
             return new Card(color, type, -1);
         }
@@ -36,15 +37,15 @@ public record Card(Color color, Ctype type, int number) {
         return null;
     }
 
-    public Card getSpecialCard(Ctype type) {
+    public static Card getSpecialCard(Ctype type) {
         if (type == Ctype.PLUSFOUR || type == Ctype.COLORCHANGE) {
-            return getSpecialCard(Color.NOCOLOR, type);
+            return new Card(Color.NOCOLOR, type, -1);
         }
         System.out.println("Invalid card type");
         return null;
     }
 
-    public List<Card> getStandartDeck() {
+    public static List<Card> getStandartDeck() {
         List<Card> deck = new ArrayList<>();
 
         for (Color color : Color.values()) {
@@ -70,5 +71,23 @@ public record Card(Color color, Ctype type, int number) {
         return deck;
     }
 
+    public static Card getRandomCardFromDeck(List<Card> deck) {
+        //deck.size == 0?
+        int randomIndex = new Random().nextInt(deck.size());
+        Card drawedCard = deck.get(randomIndex);
+        deck.remove(randomIndex);
+        return drawedCard;
+    }
 
+    @Override
+    public String toString() {
+        if (type == Ctype.NORMAL) {
+            return color.toString() + "-" + number;
+        }
+        else if (type == Ctype.PLUSFOUR || type == Ctype.COLORCHANGE) {
+            return type.toString();
+        }
+
+        return color.toString() + "-" + type.toString();
+    }
 }
