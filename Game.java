@@ -5,6 +5,7 @@ import java.util.List;
 public class Game {
     private int playerCount;
     public boolean hasSomeoneWon = false;
+    public boolean isClockwise = true;
     private int currentPlayerIndex = 0;
     private String currentColor;
     private List<Player> players = new ArrayList<>();
@@ -32,6 +33,7 @@ public class Game {
         return cardsInMiddle.get(cardsInMiddle.size()-1);
     }
 
+
     public boolean doCardsMatchs(Card card1, Card card2) {
         if (card1.type() == Card.Ctype.PLUSFOUR) {
             if (card2.type() == Card.Ctype.PLUSFOUR ) {
@@ -58,7 +60,14 @@ public class Game {
             }
             return false;
         }
-        return false;
+        else if (card1.type() == Card.Ctype.REVERSE || card1.type() == Card.Ctype.BLOCK) {
+            return card2.getColor().equals(currentColor) || card2.type() == card1.type()|| card2.type() == Card.Ctype.PLUSFOUR ||
+                    card2.type() == Card.Ctype.COLORCHANGE;
+        }
+        else {
+            return card1.getColor().equals(card2.getColor()) || card1.number() == card2.number() ||
+                                    card2.type() == Card.Ctype.COLORCHANGE || card2.type() == Card.Ctype.PLUSFOUR;
+        }
     }
 
 }
