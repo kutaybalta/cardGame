@@ -33,7 +33,39 @@ public class Game {
         return cardsInMiddle.get(cardsInMiddle.size()-1);
     }
 
-
+    public void printGameStats() {
+        System.out.printf("Current color is %s and current card is %s\n", currentColor, getCardInMiddle());
+        for (int i = 0; i < playerCount; i++) {
+            if (i == currentPlayerIndex){continue;}
+            System.out.printf("Player-%d : %d cards || ", i+1, players.get(i).getCards().size());
+        }
+        System.out.println();
+    }
+    public void printPlayerStats() {
+        System.out.printf("Player %d has %d cards and has to draw %d cards\n",
+                currentPlayerIndex+1, players.get(currentPlayerIndex).getCards().size()
+                    , players.get(currentPlayerIndex).getDrawCount());
+        System.out.printf("Player %d's cards are : \n", currentPlayerIndex+1);
+        printPlayersDeck();
+        System.out.println("Playable cards are : ");
+        System.out.println(getPlayableCards());
+    }
+    public void printPlayersDeck() {
+        var playersDeck = players.get(currentPlayerIndex).getCards();
+        for (int i = 0; i < playersDeck.size(); i ++) {
+            System.out.printf("%d)%s  ",i, playersDeck.get(i));
+        }
+        System.out.println();
+    }
+    public List<Card> getPlayableCards() {
+        List<Card> playableCards = new ArrayList<>();
+        for (Card card : players.get(currentPlayerIndex).getCards()) {
+            if (doCardsMatchs(getCardInMiddle(), card)) {
+                playableCards.add(card);
+            }
+        }
+        return playableCards;
+    }
     public boolean doCardsMatchs(Card card1, Card card2) {
         if (card1.type() == Card.Ctype.PLUSFOUR) {
             if (card2.type() == Card.Ctype.PLUSFOUR ) {
