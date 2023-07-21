@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public record Card(Color color, Ctype type, int number) {
     private enum Color {
@@ -43,6 +40,32 @@ public record Card(Color color, Ctype type, int number) {
         }
         System.out.println("Invalid card type");
         return null;
+    }
+    public static String askColor() {
+        Scanner scanner = new Scanner(System.in);
+        int colorindex = 0;
+        boolean endLoop = false;
+        String color = "NOCOLOR";
+        do {
+            System.out.println("Please choose color:\n1)RED  2)BLUE  3)GREEN  4)YELLOW");
+            try {
+                colorindex = scanner.nextInt();
+            }catch (InputMismatchException ime) {
+                System.out.println("Please give number.");
+                scanner.nextLine();
+                continue;
+            }
+
+            if (colorindex >= 1 && colorindex <= 4) {
+                color = Color.values()[colorindex-1].toString();
+                endLoop = true;
+            }
+            else {
+                System.out.println("Numbers should be between 1 and 4");
+                endLoop = false;
+            }
+        }while (!endLoop);
+        return color;
     }
 
     public static List<Card> getStandartDeck() {

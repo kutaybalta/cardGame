@@ -3,7 +3,6 @@ import java.util.List;
 
 public class Player {
     private List<Card> playerCards = new ArrayList<>();
-    private int drawCount = 0;
     private boolean hadDrawOneCard = false;
 
     public static Player createPlayer() {
@@ -14,11 +13,4 @@ public class Player {
         return playerCards;
     }
 
-    public int getDrawCount() {
-        return drawCount;
-    }
-
-    public void setDrawCount(int drawCount) {
-        this.drawCount = drawCount;
-    }
 }

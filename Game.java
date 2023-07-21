@@ -7,6 +7,7 @@ public class Game {
     public boolean hasSomeoneWon = false;
     public boolean isClockwise = true;
     private int currentPlayerIndex = 0;
+    private int drawCount = 0;
     private String currentColor;
     private List<Player> players = new ArrayList<>();
     private List<Card> deck = new ArrayList<>();
@@ -32,6 +33,63 @@ public class Game {
     public Card getCardInMiddle() {
         return cardsInMiddle.get(cardsInMiddle.size()-1);
     }
+    public void updateTurn() {
+        if (isClockwise) {
+            currentPlayerIndex++;
+            currentPlayerIndex = currentPlayerIndex == playerCount ? 0 : currentPlayerIndex;
+        }
+        else {
+            currentPlayerIndex--;
+            currentPlayerIndex = currentPlayerIndex < 0 ? playerCount-1 : currentPlayerIndex;
+        }
+    }
+    public void playCardToMiddle(Card card) {
+        cardsInMiddle.add(card);
+        players.get(currentPlayerIndex).getCards().remove(card);
+    }
+
+    public boolean playCard(int index) {
+        Card card = players.get(currentPlayerIndex).getCards().get(index);
+        if (doCardsMatchs(getCardInMiddle(), card)) {
+            if (card.type() == Card.Ctype.PLUSFOUR) {
+                drawCount += 4;
+                playCardToMiddle(card);
+                currentColor = Card.askColor();
+            }
+            else if (card.type() == Card.Ctype.COLORCHANGE) {
+                currentColor = Card.askColor();
+            }
+            else if (card.type() == Card.Ctype.PLUSTWO) {
+                drawCount += 2;
+                playCardToMiddle(card);
+                currentColor = card.getColor();
+            }
+            else if (card.type() == Card.Ctype.REVERSE) {
+                playCardToMiddle(card);
+                isClockwise = !isClockwise;
+                currentColor = card.getColor();
+            }
+            else if (card.type() == Card.Ctype.BLOCK) {
+                playCardToMiddle(card);
+                currentColor = card.getColor();
+                updateTurn();
+            }
+            else {
+                playCardToMiddle(card);
+                currentColor = card.getColor();
+            }
+            updateTurn();
+            return true;
+        }
+        else {
+            if (drawCount != 0) {
+                System.out.println("You cant play this card on plus cards");
+                return false;
+            }
+            System.out.println("You cant play this card");
+            return false;
+        }
+    }
 
     public void printGameStats() {
         System.out.printf("Current color is %s and current card is %s\n", currentColor, getCardInMiddle());
@@ -44,7 +102,7 @@ public class Game {
     public void printPlayerStats() {
         System.out.printf("Player %d has %d cards and has to draw %d cards\n",
                 currentPlayerIndex+1, players.get(currentPlayerIndex).getCards().size()
-                    , players.get(currentPlayerIndex).getDrawCount());
+                    , drawCount);
         System.out.printf("Player %d's cards are : \n", currentPlayerIndex+1);
         printPlayersDeck();
         System.out.println("Playable cards are : ");
@@ -74,7 +132,7 @@ public class Game {
             else if (card2.type() == Card.Ctype.PLUSTWO && card2.getColor().equals(currentColor)) {
                 return true;
             }
-            else if (players.get(currentPlayerIndex).getDrawCount() == 0) {
+            else if (drawCount == 0) {
                 return card2.getColor().equals(currentColor) || card2.type() == Card.Ctype.COLORCHANGE;
             }
             return false;
@@ -87,7 +145,7 @@ public class Game {
             if (card2.type() == Card.Ctype.PLUSTWO || card2.type() == Card.Ctype.PLUSFOUR) {
                 return true;
             }
-            else if (players.get(currentPlayerIndex).getDrawCount() == 0) {
+            else if (drawCount == 0) {
                 return card2.getColor().equals(currentColor) || card2.type() == Card.Ctype.COLORCHANGE;
             }
             return false;
