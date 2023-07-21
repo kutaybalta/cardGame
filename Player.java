@@ -5,7 +5,6 @@ import java.util.Scanner;
 
 public class Player {
     private List<Card> playerCards = new ArrayList<>();
-    private boolean hadDrawOneCard = false;
 
     public static int askCount() {
         Scanner scanner = new Scanner(System.in);

@@ -1,8 +1,9 @@
-import java.sql.SQLOutput;
+
 import java.util.*;
 
 public class Game {
     private int playerCount;
+    private boolean hadDrawnOneCard = false;
     public boolean isClockwise = true;
     private int currentPlayerIndex = 0;
     private int drawCount = 0;
@@ -31,10 +32,13 @@ public class Game {
     public static void startGame() {
         Game game = new Game(Player.askCount());
         do {
-            game.printGameStats();
-            game.printPlayerStats();
             boolean isPlayed = false;
             do {
+                game.printGameStats();
+                System.out.println("-".repeat(20));
+                game.printPlayerStats();
+                System.out.println("-".repeat(20));
+                game.printOptions();
                 isPlayed = game.playCard(game.askUserCardIndex());
             }while (!isPlayed);
         }while (!game.hasSomeoneWon());
@@ -54,8 +58,8 @@ public class Game {
                 continue;
             }
 
-            if (index < 0 || index >= players.get(currentPlayerIndex).getCards().size()) {
-                System.out.println("Invalid card index");
+            if (index < -3 || index >= players.get(currentPlayerIndex).getCards().size()) {
+                System.out.println("Invalid card index or invalid option");
             }
             else {
                 endLoop = true;
@@ -76,6 +80,7 @@ public class Game {
             currentPlayerIndex--;
             currentPlayerIndex = currentPlayerIndex < 0 ? playerCount-1 : currentPlayerIndex;
         }
+        hadDrawnOneCard = false;
     }
     public boolean hasSomeoneWon() {
         for (int i = 0; i < players.size(); i++) {
@@ -92,6 +97,37 @@ public class Game {
     }
 
     public boolean playCard(int index) {
+        if (index == -1) {
+            if (drawCount != 0) {
+                for (int i = 0; i < drawCount; i++) {
+                    players.get(currentPlayerIndex).getCards().add(Card.getRandomCardFromDeck(deck));
+                }
+                System.out.println("Drew all waiting cards");
+                drawCount = 0;
+            }
+            else { System.out.println("No card waiting to draw");}
+            return false;
+        }
+        else if (index == -2) {
+            if (!hadDrawnOneCard) {
+                players.get(currentPlayerIndex).getCards().add(Card.getRandomCardFromDeck(deck));
+                System.out.println("Drew one card");
+                hadDrawnOneCard = true;
+            }
+            else { System.out.println("You already drew one card");}
+            return false;
+        }
+        else if (index == -3) {
+            if (hadDrawnOneCard) {
+                updateTurn();
+                return true;
+            }
+            else {
+                System.out.println("You have to draw at least one cards before skipping");
+                return false;
+            }
+        }
+
         Card card = players.get(currentPlayerIndex).getCards().get(index);
         if (doCardsMatchs(getCardInMiddle(), card)) {
             if (card.type() == Card.Ctype.PLUSFOUR) {
@@ -135,8 +171,12 @@ public class Game {
         }
     }
 
+    public void printOptions() {
+        System.out.println("To draw waiting cards -1\nJust draw one card from deck -2\nTo skip -3");
+    }
     public void printGameStats() {
-        System.out.println("----------------------------------------");
+        System.out.println();
+        System.out.println("*".repeat(40));
         System.out.printf("Current color is %s and current card is %s\n", currentColor, getCardInMiddle());
         for (int i = 0; i < playerCount; i++) {
             if (i == currentPlayerIndex){continue;}
@@ -148,10 +188,9 @@ public class Game {
         System.out.printf("Player %d has %d cards and has to draw %d cards\n",
                 currentPlayerIndex+1, players.get(currentPlayerIndex).getCards().size()
                     , drawCount);
-        System.out.printf("Player %d's cards are : \n", currentPlayerIndex+1);
+        System.out.printf("Player %d's cards are : ", currentPlayerIndex+1);
         printPlayersDeck();
-        System.out.println("Playable cards are : ");
-        System.out.println(getPlayableCards());
+        System.out.println("Playable cards are : " + getPlayableCards());
     }
     public void printPlayersDeck() {
         var playersDeck = players.get(currentPlayerIndex).getCards();
