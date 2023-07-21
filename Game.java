@@ -1,10 +1,8 @@
-import java.util.ArrayList;
-import java.util.IllegalFormatCodePointException;
-import java.util.List;
+import java.sql.SQLOutput;
+import java.util.*;
 
 public class Game {
     private int playerCount;
-    public boolean hasSomeoneWon = false;
     public boolean isClockwise = true;
     private int currentPlayerIndex = 0;
     private int drawCount = 0;
@@ -30,6 +28,42 @@ public class Game {
         this.currentColor = getCardInMiddle().getColor();
     }
 
+    public static void startGame() {
+        Game game = new Game(Player.askCount());
+        do {
+            game.printGameStats();
+            game.printPlayerStats();
+            boolean isPlayed = false;
+            do {
+                isPlayed = game.playCard(game.askUserCardIndex());
+            }while (!isPlayed);
+        }while (!game.hasSomeoneWon());
+    }
+
+    public int askUserCardIndex() {
+        Scanner scanner = new Scanner(System.in);
+        int index = 0;
+        boolean endLoop = false;
+        do {
+            System.out.println("Please give card index between 0-" + (players.get(currentPlayerIndex).getCards().size()-1) );
+            try {
+                index = scanner.nextInt();
+            }catch (InputMismatchException ime) {
+                System.out.println("Pleas give number");
+                scanner.nextLine();
+                continue;
+            }
+
+            if (index < 0 || index >= players.get(currentPlayerIndex).getCards().size()) {
+                System.out.println("Invalid card index");
+            }
+            else {
+                endLoop = true;
+            }
+        }while (!endLoop);
+        return index;
+    }
+
     public Card getCardInMiddle() {
         return cardsInMiddle.get(cardsInMiddle.size()-1);
     }
@@ -42,6 +76,15 @@ public class Game {
             currentPlayerIndex--;
             currentPlayerIndex = currentPlayerIndex < 0 ? playerCount-1 : currentPlayerIndex;
         }
+    }
+    public boolean hasSomeoneWon() {
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i).getCards().size() == 0) {
+                System.out.printf("Player %d has won", i+1);
+                return true;
+            }
+        }
+        return false;
     }
     public void playCardToMiddle(Card card) {
         cardsInMiddle.add(card);
@@ -57,6 +100,7 @@ public class Game {
                 currentColor = Card.askColor();
             }
             else if (card.type() == Card.Ctype.COLORCHANGE) {
+                playCardToMiddle(card);
                 currentColor = Card.askColor();
             }
             else if (card.type() == Card.Ctype.PLUSTWO) {
@@ -92,6 +136,7 @@ public class Game {
     }
 
     public void printGameStats() {
+        System.out.println("----------------------------------------");
         System.out.printf("Current color is %s and current card is %s\n", currentColor, getCardInMiddle());
         for (int i = 0; i < playerCount; i++) {
             if (i == currentPlayerIndex){continue;}
