@@ -9,7 +9,7 @@ public class Game {
     private int drawCount = 0;
     private String currentColor;
     private List<Player> players = new ArrayList<>();
-    private List<Card> deck = new ArrayList<>();
+    private List<Card> deck;
     private List<Card> cardsInMiddle = new ArrayList<>();
 
     public Game(int playerCount) {
@@ -110,9 +110,14 @@ public class Game {
         }
         else if (index == -2) {
             if (!hadDrawnOneCard) {
-                players.get(currentPlayerIndex).getCards().add(Card.getRandomCardFromDeck(deck));
-                System.out.println("Drew one card");
-                hadDrawnOneCard = true;
+                if (drawCount == 0) {
+                    players.get(currentPlayerIndex).getCards().add(Card.getRandomCardFromDeck(deck));
+                    System.out.println("Drew one card");
+                    hadDrawnOneCard = true;
+                }
+                else {
+                    System.out.println("You have to draw waiting cards before draw one more");
+                }
             }
             else { System.out.println("You already drew one card");}
             return false;
