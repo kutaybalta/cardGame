@@ -2,13 +2,13 @@
 import java.util.*;
 
 public class Game {
-    private int playerCount;
+    protected int playerCount;
     private boolean hadDrawnOneCard = false;
     public boolean isClockwise = true;
-    private int currentPlayerIndex = 0;
-    private int drawCount = 0;
+    protected int currentPlayerIndex = 0;
+    protected int drawCount = 0;
     private String currentColor;
-    private List<Player> players = new ArrayList<>();
+    List<Player> players = new ArrayList<>();
     private List<Card> deck;
     private List<Card> cardsInMiddle = new ArrayList<>();
 
