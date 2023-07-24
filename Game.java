@@ -3,6 +3,7 @@ import java.util.*;
 
 public class Game {
     protected int playerCount;
+    private Autoplay autoplay;
     private boolean hadDrawnOneCard = false;
     public boolean isClockwise = true;
     protected int currentPlayerIndex = 0;
@@ -29,8 +30,13 @@ public class Game {
         this.currentColor = getCardInMiddle().getColor();
     }
 
+    public void setAutoplay(Autoplay autoplay) {
+        this.autoplay = autoplay;
+    }
+
     public static void startGame() {
         Game game = new Game(Player.askCount());
+        game.setAutoplay(new Autoplay(game));
         do {
             boolean isPlayed = false;
             do {
@@ -123,12 +129,12 @@ public class Game {
             return false;
         }
         else if (index == -3) {
-            if (hadDrawnOneCard) {
+            if (hadDrawnOneCard && drawCount == 0) {
                 updateTurn();
                 return true;
             }
             else {
-                System.out.println("You have to draw at least one cards before skipping");
+                System.out.println("You have to draw at least one cards before skipping or draw waiting cards");
                 return false;
             }
         }
@@ -195,7 +201,12 @@ public class Game {
                     , drawCount);
         System.out.printf("Player %d's cards are : ", currentPlayerIndex+1);
         printPlayersDeck();
-        System.out.println("Playable cards are : " + getPlayableCards());
+
+        System.out.println("Card Values");
+        for (Card card : getPlayableCards()) {
+            System.out.printf("%s " + autoplay.calculateMoveValue(card) + " ",card);
+        }
+        System.out.println();
     }
     public void printPlayersDeck() {
         var playersDeck = players.get(currentPlayerIndex).getCards();
